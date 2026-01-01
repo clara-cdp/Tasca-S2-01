@@ -27,3 +27,9 @@ Llista les diferents ulleres que ha venut un empleat durant un any.
 Llista els diferents proveïdors que han subministrat ulleres venudes amb èxit per l'òptica.
 <img width="3208" height="641" alt="S2-01-llistatDeProveidorsVenutUlleres" src="https://github.com/user-attachments/assets/0c70fe6e-06ff-4fe7-b2b9-f527019257d4" />
 
+**exercici 2 - pizzeria**
+
+Llista quants productes de tipus “Begudes” s'han venut en una determinada localitat.
+
+Llista quantes comandes ha efectuat un determinat empleat/da.
+
