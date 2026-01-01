@@ -17,15 +17,18 @@ USE `CUL_DAMPOLLA` ;
 -- -----------------------------------------------------
 -- Table `CUL_DAMPOLLA`.`SUPPLIER`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `CUL_DAMPOLLA`.`SUPPLIER` ;
+
 CREATE TABLE IF NOT EXISTS `CUL_DAMPOLLA`.`SUPPLIER` (
   `ID` INT(15) NOT NULL AUTO_INCREMENT,
   `NIF` VARCHAR(9) NOT NULL,
   `Name` VARCHAR(45) NOT NULL,
-  `Phone` VARCHAR(11) NOT NULL,
-  `Street` VARCHAR(45) NULL,
-  `Number` VARCHAR(10) NULL,
-  `Postal Code` VARCHAR(5) NULL,
-  `Country` VARCHAR(20) NULL,
+  `Phone` VARCHAR(20) NOT NULL,
+  `Street` VARCHAR(45) NOT NULL,
+  `Number` VARCHAR(10) NOT NULL,
+  `City` VARCHAR(45) NOT NULL,
+  `Postal_code` VARCHAR(5) NOT NULL,
+  `Country` VARCHAR(20) NOT NULL,
   `Fax` VARCHAR(11) NULL,
   PRIMARY KEY (`ID`),
   UNIQUE INDEX `NIF_UNIQUE` (`NIF` ASC) )
@@ -35,12 +38,14 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `CUL_DAMPOLLA`.`BRAND`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `CUL_DAMPOLLA`.`BRAND` ;
+
 CREATE TABLE IF NOT EXISTS `CUL_DAMPOLLA`.`BRAND` (
   `ID BRAND` INT NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(25) NOT NULL,
   `SUPPLIER_ID` INT(15) NOT NULL,
   PRIMARY KEY (`ID BRAND`),
-  INDEX `fk_BRAND_SUPPLIER1_idx` (`SUPPLIER_ID` ASC),
+  INDEX `fk_BRAND_SUPPLIER1_idx` (`SUPPLIER_ID` ASC) ,
   CONSTRAINT `fk_BRAND_SUPPLIER1`
     FOREIGN KEY (`SUPPLIER_ID`)
     REFERENCES `CUL_DAMPOLLA`.`SUPPLIER` (`ID`)
@@ -52,8 +57,10 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `CUL_DAMPOLLA`.`GLASSES`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `CUL_DAMPOLLA`.`GLASSES` ;
+
 CREATE TABLE IF NOT EXISTS `CUL_DAMPOLLA`.`GLASSES` (
-  `ID Glasses` INT(15) NOT NULL,
+  `ID Glasses` INT(15) NOT NULL AUTO_INCREMENT,
   `PRICE` DECIMAL(6,2) NOT NULL,
   `frame_type` ENUM('F', 'P', 'M') NOT NULL,
   `frame_colour` VARCHAR(10) NOT NULL,
@@ -75,15 +82,16 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `CUL_DAMPOLLA`.`CLIENT`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `CUL_DAMPOLLA`.`CLIENT` ;
+
 CREATE TABLE IF NOT EXISTS `CUL_DAMPOLLA`.`CLIENT` (
-  `ID CLIENT` INT(10) NOT NULL,
+  `ID CLIENT` INT(10) NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(45) NOT NULL,
-  `Phone` VARCHAR(11) NOT NULL,
+  `Phone` VARCHAR(20) NOT NULL,
   `Register_date` DATE NOT NULL,
   `Email` VARCHAR(45) NULL,
-  `Postal Code` VARCHAR(5) NULL,
-  `SALES_ASSITANTcol` VARCHAR(45) NULL,
-  `recomended_by_ID CLIENT` INT(10) NOT NULL,
+  `Postal_code` VARCHAR(5) NULL,
+  `recomended_by_ID CLIENT` INT(10) NULL,
   PRIMARY KEY (`ID CLIENT`),
   INDEX `fk_CLIENT_CLIENT1_idx` (`recomended_by_ID CLIENT` ASC) ,
   CONSTRAINT `fk_CLIENT_CLIENT1`
@@ -95,28 +103,32 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `CUL_DAMPOLLA`.`SALES_ASSITANT`
+-- Table `CUL_DAMPOLLA`.`SALES_ASSISTANT`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `CUL_DAMPOLLA`.`SALES_ASSITANT` (
-  `Employer ID` INT NOT NULL,
+DROP TABLE IF EXISTS `CUL_DAMPOLLA`.`SALES_ASSISTANT` ;
+
+CREATE TABLE IF NOT EXISTS `CUL_DAMPOLLA`.`SALES_ASSISTANT` (
+  `ID` INT(10) NOT NULL AUTO_INCREMENT,
   `Name` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`Employer ID`))
+  PRIMARY KEY (`ID`))
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `CUL_DAMPOLLA`.`SALE`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `CUL_DAMPOLLA`.`SALE` ;
+
 CREATE TABLE IF NOT EXISTS `CUL_DAMPOLLA`.`SALE` (
   ` ID SALE` INT NOT NULL AUTO_INCREMENT,
   `Date` DATE NOT NULL,
   `GLASSES_GLASSES ID` INT(15) NOT NULL,
   `CLIENT_ID_CLIENT` INT(10) NOT NULL,
-  `SALES_ASSITANT_Employer ID` INT NOT NULL,
+  `SALES_ASSISTANT_ID` INT(10) NOT NULL,
   PRIMARY KEY (` ID SALE`),
-  INDEX `fk_SALE_GLASSES1_idx` (`GLASSES_GLASSES ID` ASC),
+  INDEX `fk_SALE_GLASSES1_idx` (`GLASSES_GLASSES ID` ASC) ,
   INDEX `fk_SALE_CLIENT1_idx` (`CLIENT_ID_CLIENT` ASC) ,
-  INDEX `fk_SALE_SALES_ASSITANT1_idx` (`SALES_ASSITANT_Employer ID` ASC) ,
+  INDEX `fk_SALE_SALES_ASSISTANT1_idx` (`SALES_ASSISTANT_ID` ASC) ,
   CONSTRAINT `fk_SALE_GLASSES1`
     FOREIGN KEY (`GLASSES_GLASSES ID`)
     REFERENCES `CUL_DAMPOLLA`.`GLASSES` (`ID Glasses`)
@@ -127,9 +139,9 @@ CREATE TABLE IF NOT EXISTS `CUL_DAMPOLLA`.`SALE` (
     REFERENCES `CUL_DAMPOLLA`.`CLIENT` (`ID CLIENT`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_SALE_SALES_ASSITANT1`
-    FOREIGN KEY (`SALES_ASSITANT_Employer ID`)
-    REFERENCES `CUL_DAMPOLLA`.`SALES_ASSITANT` (`Employer ID`)
+  CONSTRAINT `fk_SALE_SALES_ASSISTANT1`
+    FOREIGN KEY (`SALES_ASSISTANT_ID`)
+    REFERENCES `CUL_DAMPOLLA`.`SALES_ASSISTANT` (`ID`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
