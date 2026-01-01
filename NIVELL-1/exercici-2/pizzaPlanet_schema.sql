@@ -17,6 +17,8 @@ USE `PizzaPlanet` ;
 -- -----------------------------------------------------
 -- Table `PizzaPlanet`.`CUSTOMER`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `PizzaPlanet`.`CUSTOMER` ;
+
 CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`CUSTOMER` (
   `idCUSTOMER` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(20) NOT NULL,
@@ -34,6 +36,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `PizzaPlanet`.`STORE`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `PizzaPlanet`.`STORE` ;
+
 CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`STORE` (
   `idSTORE` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `address` VARCHAR(45) NOT NULL,
@@ -47,6 +51,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `PizzaPlanet`.`EMPLOYEE`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `PizzaPlanet`.`EMPLOYEE` ;
+
 CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`EMPLOYEE` (
   `idEMPLOYEE` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(20) NOT NULL,
@@ -68,6 +74,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `PizzaPlanet`.`DRIVER`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `PizzaPlanet`.`DRIVER` ;
+
 CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`DRIVER` (
   `EMPLOYEE_idEMPLOYEE` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`EMPLOYEE_idEMPLOYEE`),
@@ -80,8 +88,26 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `PizzaPlanet`.`CHEF`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `PizzaPlanet`.`CHEF` ;
+
+CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`CHEF` (
+  `EMPLOYEE_idEMPLOYEE` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`EMPLOYEE_idEMPLOYEE`),
+  CONSTRAINT `fk_CHEF_EMPLOYEE1`
+    FOREIGN KEY (`EMPLOYEE_idEMPLOYEE`)
+    REFERENCES `PizzaPlanet`.`EMPLOYEE` (`idEMPLOYEE`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `PizzaPlanet`.`ORDER`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `PizzaPlanet`.`ORDER` ;
+
 CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`ORDER` (
   `idORDER` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `order_type` ENUM('delivery', 'pickup') NOT NULL,
@@ -90,10 +116,12 @@ CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`ORDER` (
   `CUSTOMER_idCUSTOMER` INT UNSIGNED NOT NULL,
   `STORE_idSTORE` INT UNSIGNED NOT NULL,
   `DRIVER_EMPLOYEE_idEMPLOYEE` INT UNSIGNED NULL,
-  PRIMARY KEY (`idORDER`),
+  `CHEF_EMPLOYEE_idEMPLOYEE` INT UNSIGNED NOT NULL,
+  PRIMARY KEY (`idORDER`, `CHEF_EMPLOYEE_idEMPLOYEE`),
   INDEX `fk_ORDER_CUSTOMER1_idx` (`CUSTOMER_idCUSTOMER` ASC) ,
   INDEX `fk_ORDER_STORE1_idx` (`STORE_idSTORE` ASC) ,
   INDEX `fk_ORDER_DRIVER1_idx` (`DRIVER_EMPLOYEE_idEMPLOYEE` ASC) ,
+  INDEX `fk_ORDER_CHEF1_idx` (`CHEF_EMPLOYEE_idEMPLOYEE` ASC) ,
   CONSTRAINT `fk_ORDER_CUSTOMER1`
     FOREIGN KEY (`CUSTOMER_idCUSTOMER`)
     REFERENCES `PizzaPlanet`.`CUSTOMER` (`idCUSTOMER`)
@@ -108,6 +136,11 @@ CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`ORDER` (
     FOREIGN KEY (`DRIVER_EMPLOYEE_idEMPLOYEE`)
     REFERENCES `PizzaPlanet`.`DRIVER` (`EMPLOYEE_idEMPLOYEE`)
     ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ORDER_CHEF1`
+    FOREIGN KEY (`CHEF_EMPLOYEE_idEMPLOYEE`)
+    REFERENCES `PizzaPlanet`.`CHEF` (`EMPLOYEE_idEMPLOYEE`)
+    ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
@@ -115,6 +148,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `PizzaPlanet`.`PIZZA_TYPE`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `PizzaPlanet`.`PIZZA_TYPE` ;
+
 CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`PIZZA_TYPE` (
   `idPIZZA_TYPE` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
@@ -125,6 +160,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `PizzaPlanet`.`PRODUCT`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `PizzaPlanet`.`PRODUCT` ;
+
 CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`PRODUCT` (
   `idPRODUCT` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
@@ -139,6 +176,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `PizzaPlanet`.`PIZZA`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `PizzaPlanet`.`PIZZA` ;
+
 CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`PIZZA` (
   `PIZZA_TYPE_idPIZZA_TYPE` INT UNSIGNED NOT NULL,
   `PRODUCT_idPRODUCT` INT UNSIGNED NOT NULL,
@@ -161,6 +200,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `PizzaPlanet`.`BURGER`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `PizzaPlanet`.`BURGER` ;
+
 CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`BURGER` (
   `PRODUCT_idPRODUCT` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`PRODUCT_idPRODUCT`),
@@ -175,6 +216,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `PizzaPlanet`.`DRINK`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `PizzaPlanet`.`DRINK` ;
+
 CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`DRINK` (
   `PRODUCT_idPRODUCT` INT UNSIGNED NOT NULL,
   PRIMARY KEY (`PRODUCT_idPRODUCT`),
@@ -187,22 +230,10 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `PizzaPlanet`.`CHEF`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`CHEF` (
-  `EMPLOYEE_idEMPLOYEE` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`EMPLOYEE_idEMPLOYEE`),
-  CONSTRAINT `fk_CHEF_EMPLOYEE1`
-    FOREIGN KEY (`EMPLOYEE_idEMPLOYEE`)
-    REFERENCES `PizzaPlanet`.`EMPLOYEE` (`idEMPLOYEE`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `PizzaPlanet`.`ORDER_DETAILS`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `PizzaPlanet`.`ORDER_DETAILS` ;
+
 CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`ORDER_DETAILS` (
   `product_quanity` INT NOT NULL,
   `unit_price` DECIMAL(6,2) NOT NULL,
@@ -226,6 +257,9 @@ ENGINE = InnoDB;
 USE `PizzaPlanet`;
 
 DELIMITER $$
+
+USE `PizzaPlanet`$$
+DROP TRIGGER IF EXISTS `PizzaPlanet`.`ORDER_DETAILS_AFTER_INSERT_1` $$
 USE `PizzaPlanet`$$
 CREATE DEFINER = CURRENT_USER TRIGGER `PizzaPlanet`.`ORDER_DETAILS_AFTER_INSERT_1` AFTER INSERT ON `ORDER_DETAILS` FOR EACH ROW
 BEGIN
@@ -238,6 +272,9 @@ BEGIN
     WHERE idORDER = NEW.ORDER_idORDER;
 END$$
 
+
+USE `PizzaPlanet`$$
+DROP TRIGGER IF EXISTS `PizzaPlanet`.`ORDER_DETAILS_BEFORE_INSERT` $$
 USE `PizzaPlanet`$$
 CREATE DEFINER = CURRENT_USER TRIGGER `PizzaPlanet`.`ORDER_DETAILS_BEFORE_INSERT` BEFORE INSERT ON `ORDER_DETAILS` FOR EACH ROW
 BEGIN

@@ -1,24 +1,25 @@
 
 INSERT INTO STORE (address, postal_code, city, province) 
 VALUES 
-('Calle Mayor 1', '28001', 'Madrid', 'Mad'),
+('Carrer  1', '28001', 'Madrid', 'Mad'),
 ('Avinguda Diagonal 45', '08001', 'Barcelona', 'Bcn'),
 ('Calle Betis 12', '41011', 'Sevilla', 'Sev');
 
 INSERT INTO EMPLOYEE (name, surname, NIF, phone, STORE_idSTORE) 
 VALUES 
 ('Carlos', 'Garcia', '12345678A', '+34 600111222', 1),
-('Marta', 'Lopez', '87654321B', '+34 600333444', 1),
+('Marta', 'Lopez', '87654321B', '+34 600333444', 2),
+('Georgio', 'Milano', '12457896C', '+34 600123456', 3),
 
-('Joan', 'Vila', '11223344X', '+34 611222333', 2),
+('Joan', 'Vila', '11223344X', '+34 611222333', 1),
 ('Sofia', 'Ruiz', '55667788Z', '+34 622444555', 2),
 ('Luis', 'Perez', '99887766Y', '+34 633555666', 3);
 
 INSERT INTO CHEF (EMPLOYEE_idEMPLOYEE) 
-VALUES (1), (2);
+VALUES (1), (2),(3);
 
 INSERT INTO DRIVER (EMPLOYEE_idEMPLOYEE) 
-VALUES (3), (4), (5);
+VALUES (4), (5), (6);
 
 
 INSERT INTO PIZZA_TYPE (name) 
@@ -53,19 +54,19 @@ VALUES
 
 INSERT INTO DRINK (PRODUCT_idPRODUCT) 
 VALUES 
-(7), (8),(9);
+(7), (8), (9);
 
 INSERT INTO CUSTOMER (name, surname, phone_number, address, postal_code, city, province) 
 VALUES 
 ('Elena', 'Martínez', '+34 655123456', 'Calle Goya 5', '28001', 'Madrid', 'Mad'),
+('Jorge', 'García', '+34 612345678', 'Calle Alcala 5', '28007', 'Madrid', 'Mad'),
 ('Jordi', 'Puig', '+34 688987654', 'Carrer Balmes 10', '08001', 'Barcelona', 'Bcn'),
-('Ana', 'Sanz', '+34 600555444', 'Calle Sierpes 2', '41011', 'Sevilla', 'Sev'),
-('Jorge', 'García', '+34 612345678', 'Calle Alcala 5', '28007', 'Madrid', 'Mad');
+('Ana', 'Sanz', '+34 600555444', 'Calle Sierpes 2', '41011', 'Sevilla', 'Sev');
 
 
-INSERT INTO `ORDER` (order_type, date_time, order_total_amount, CUSTOMER_idCUSTOMER, STORE_idSTORE, DRIVER_EMPLOYEE_idEMPLOYEE ) 
+INSERT INTO `ORDER` (order_type, date_time, order_total_amount, CUSTOMER_idCUSTOMER, STORE_idSTORE, DRIVER_EMPLOYEE_idEMPLOYEE, CHEF_EMPLOYEE_idEMPLOYEE ) 
 VALUES 
-('delivery', NOW(), 0.00, 3, 1, 4); 
+('delivery', NOW(), 0.00, 1, 1, 4, 1); 
 
 SET @order1 = LAST_INSERT_ID(); 
 
@@ -77,16 +78,18 @@ INSERT INTO ORDER_DETAILS (ORDER_idORDER, PRODUCT_idPRODUCT, product_quanity, un
 VALUES 
 (@order1, 8, 4, 2.50, 0);  
 
-INSERT INTO `ORDER` (order_type, date_time, order_total_amount, CUSTOMER_idCUSTOMER, STORE_idSTORE) 
-VALUES ('pickup', NOW(), 0.00, 1, 1); 
+
+INSERT INTO `ORDER` (order_type, date_time, order_total_amount, CUSTOMER_idCUSTOMER, STORE_idSTORE, DRIVER_EMPLOYEE_idEMPLOYEE, CHEF_EMPLOYEE_idEMPLOYEE) 
+VALUES ('pickup', NOW(), 0.00, 2, 1, NULL, 1); 
 
 SET @order2 = LAST_INSERT_ID();
 
 INSERT INTO ORDER_DETAILS (ORDER_idORDER, PRODUCT_idPRODUCT, product_quanity, unit_price, line_total) 
 VALUES (@order2, 4, 1, 8.50, 0); 
 
-INSERT INTO `ORDER` (order_type, date_time, order_total_amount, CUSTOMER_idCUSTOMER, STORE_idSTORE, DRIVER_EMPLOYEE_idEMPLOYEE) 
-VALUES ('delivery', NOW(), 0.00, 2, 2, 4); 
+
+INSERT INTO `ORDER` (order_type, date_time, order_total_amount, CUSTOMER_idCUSTOMER, STORE_idSTORE, DRIVER_EMPLOYEE_idEMPLOYEE,CHEF_EMPLOYEE_idEMPLOYEE) 
+VALUES ('delivery', NOW(), 0.00, 3, 2, 5, 2); 
 
 SET @order3 = LAST_INSERT_ID();
 
@@ -94,5 +97,20 @@ INSERT INTO ORDER_DETAILS (ORDER_idORDER, PRODUCT_idPRODUCT, product_quanity, un
 VALUES (@order3, 2, 3, 12.00, 0); 
 
 INSERT INTO ORDER_DETAILS (ORDER_idORDER, PRODUCT_idPRODUCT, product_quanity, unit_price, line_total) 
-VALUES (@order3, 9, 4, 1.50, 0);  
+VALUES (@order3, 9, 4, 1.50, 0); 
+
+
+INSERT INTO `ORDER` (order_type, date_time, order_total_amount, CUSTOMER_idCUSTOMER, STORE_idSTORE, DRIVER_EMPLOYEE_idEMPLOYEE, CHEF_EMPLOYEE_idEMPLOYEE ) 
+VALUES 
+('delivery', NOW(), 0.00, 4, 3, 6, 3); 
+
+SET @order4 = LAST_INSERT_ID(); 
+
+INSERT INTO ORDER_DETAILS (ORDER_idORDER, PRODUCT_idPRODUCT, product_quanity, unit_price, line_total) 
+VALUES 
+(@order4, 1, 1, 10.50, 0); 
+
+INSERT INTO ORDER_DETAILS (ORDER_idORDER, PRODUCT_idPRODUCT, product_quanity, unit_price, line_total) 
+VALUES 
+(@order4, 7, 2, 2.50, 0);  
 
