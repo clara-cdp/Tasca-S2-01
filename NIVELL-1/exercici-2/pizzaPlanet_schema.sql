@@ -225,3 +225,32 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+
+-------------------------------------------------------------------------------
+-- UPDATE FOR PRICES
+-------------------------------------------------------------------------------
+-- MySQL Workbench Synchronization
+-- Generated: 2026-01-01 12:12
+-- Model: New Model
+-- Version: 1.0
+-- Project: Name of the project
+-- Author: Clara
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+ALTER TABLE `pizzaplanet`.`ORDER` 
+ADD COLUMN `order_total_amount` DECIMAL(6,2) NOT NULL AFTER `date_time`;
+
+ALTER TABLE `pizzaplanet`.`ORDER_DETAILS` 
+ADD COLUMN `line_total` DECIMAL(6,2) NOT NULL AFTER `unit_price`,
+CHANGE COLUMN `total_price` `unit_price` DECIMAL(6,2) NOT NULL ,
+DROP PRIMARY KEY,
+ADD PRIMARY KEY (`PRODUCT_idPRODUCT`, `ORDER_idORDER`);
+;
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
