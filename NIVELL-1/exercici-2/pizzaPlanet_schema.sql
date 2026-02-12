@@ -113,6 +113,7 @@ CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`ORDER` (
   `order_type` ENUM('delivery', 'pickup') NOT NULL,
   `date_time` DATETIME NOT NULL,
   `order_total_amount` DECIMAL(6,2) NOT NULL,
+  `delivery_time` DATETIME NOT NULL,
   `CUSTOMER_idCUSTOMER` INT UNSIGNED NOT NULL,
   `STORE_idSTORE` INT UNSIGNED NOT NULL,
   `DRIVER_EMPLOYEE_idEMPLOYEE` INT UNSIGNED NULL,
@@ -146,18 +147,6 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `PizzaPlanet`.`PIZZA_TYPE`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `PizzaPlanet`.`PIZZA_TYPE` ;
-
-CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`PIZZA_TYPE` (
-  `idPIZZA_TYPE` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`idPIZZA_TYPE`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `PizzaPlanet`.`PRODUCT`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `PizzaPlanet`.`PRODUCT` ;
@@ -168,60 +157,24 @@ CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`PRODUCT` (
   `price` DECIMAL(6,2) NOT NULL,
   `image_url` VARCHAR(255) NULL,
   `description` VARCHAR(255) NULL,
+  `product_type` ENUM('pizza', 'burger', 'drink') NOT NULL,
   PRIMARY KEY (`idPRODUCT`),
   UNIQUE INDEX `name_UNIQUE` (`name` ASC) )
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `PizzaPlanet`.`PIZZA`
+-- Table `PizzaPlanet`.`PIZZA_TYPE`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `PizzaPlanet`.`PIZZA` ;
+DROP TABLE IF EXISTS `PizzaPlanet`.`PIZZA_TYPE` ;
 
-CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`PIZZA` (
-  `PIZZA_TYPE_idPIZZA_TYPE` INT UNSIGNED NOT NULL,
+CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`PIZZA_TYPE` (
+  `idPIZZA_TYPE` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NOT NULL,
   `PRODUCT_idPRODUCT` INT UNSIGNED NOT NULL,
-  INDEX `fk_PIZZA_PIZZA_TYPE1_idx` (`PIZZA_TYPE_idPIZZA_TYPE` ASC) ,
-  PRIMARY KEY (`PIZZA_TYPE_idPIZZA_TYPE`, `PRODUCT_idPRODUCT`),
-  INDEX `fk_PIZZA_PRODUCT1_idx` (`PRODUCT_idPRODUCT` ASC) ,
-  CONSTRAINT `fk_PIZZA_PIZZA_TYPE1`
-    FOREIGN KEY (`PIZZA_TYPE_idPIZZA_TYPE`)
-    REFERENCES `PizzaPlanet`.`PIZZA_TYPE` (`idPIZZA_TYPE`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_PIZZA_PRODUCT1`
-    FOREIGN KEY (`PRODUCT_idPRODUCT`)
-    REFERENCES `PizzaPlanet`.`PRODUCT` (`idPRODUCT`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `PizzaPlanet`.`BURGER`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `PizzaPlanet`.`BURGER` ;
-
-CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`BURGER` (
-  `PRODUCT_idPRODUCT` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`PRODUCT_idPRODUCT`),
-  CONSTRAINT `fk_BURGUER_PRODUCT1`
-    FOREIGN KEY (`PRODUCT_idPRODUCT`)
-    REFERENCES `PizzaPlanet`.`PRODUCT` (`idPRODUCT`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `PizzaPlanet`.`DRINK`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `PizzaPlanet`.`DRINK` ;
-
-CREATE TABLE IF NOT EXISTS `PizzaPlanet`.`DRINK` (
-  `PRODUCT_idPRODUCT` INT UNSIGNED NOT NULL,
-  PRIMARY KEY (`PRODUCT_idPRODUCT`),
-  CONSTRAINT `fk_DRINK_PRODUCT1`
+  PRIMARY KEY (`idPIZZA_TYPE`, `PRODUCT_idPRODUCT`),
+  INDEX `fk_PIZZA_TYPE_PRODUCT1_idx` (`PRODUCT_idPRODUCT` ASC) ,
+  CONSTRAINT `fk_PIZZA_TYPE_PRODUCT1`
     FOREIGN KEY (`PRODUCT_idPRODUCT`)
     REFERENCES `PizzaPlanet`.`PRODUCT` (`idPRODUCT`)
     ON DELETE NO ACTION
@@ -257,6 +210,28 @@ ENGINE = InnoDB;
 USE `PizzaPlanet`;
 
 DELIMITER $$
+
+USE `PizzaPlanet`$$
+DROP TRIGGER IF EXISTS `PizzaPlanet`.`PIZZA_TYPE_BEFORE_INSERT` $$
+USE `PizzaPlanet`$$
+CREATE TRIGGER `PizzaPlanet`.`PIZZA_TYPE_BEFORE_INSERT` 
+BEFORE INSERT ON `PIZZA_TYPE` 
+FOR EACH ROW
+BEGIN
+    DECLARE v_type VARCHAR(45);
+
+    -- Obtenim el tipus de producte de la taula pare
+    SELECT product_type INTO v_type 
+    FROM PRODUCT 
+    WHERE idPRODUCT = NEW.PRODUCT_idPRODUCT;
+
+    -- Validem que el producte sigui realment una pizza
+    IF v_type <> 'pizza' THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'Error: No es pot assignar una categoria de pizza a un producte que no sigui de tipus pizza.';
+    END IF;
+END$$
+
 
 USE `PizzaPlanet`$$
 DROP TRIGGER IF EXISTS `PizzaPlanet`.`ORDER_DETAILS_AFTER_INSERT_1` $$

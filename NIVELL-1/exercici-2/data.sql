@@ -1,61 +1,45 @@
+USE `PizzaPlanet`;
 
+-- 1. Botigues
 INSERT INTO STORE (address, postal_code, city, province) 
 VALUES 
-('Carrer  1', '28001', 'Madrid', 'Mad'),
+('Carrer 1', '28001', 'Madrid', 'Mad'),
 ('Avinguda Diagonal 45', '08001', 'Barcelona', 'Bcn'),
 ('Calle Betis 12', '41011', 'Sevilla', 'Sev');
 
+-- 2. Empleats
 INSERT INTO EMPLOYEE (name, surname, NIF, phone, STORE_idSTORE) 
 VALUES 
 ('Carlos', 'Garcia', '12345678A', '+34 600111222', 1),
 ('Marta', 'Lopez', '87654321B', '+34 600333444', 2),
 ('Georgio', 'Milano', '12457896C', '+34 600123456', 3),
-
 ('Joan', 'Vila', '11223344X', '+34 611222333', 1),
 ('Sofia', 'Ruiz', '55667788Z', '+34 622444555', 2),
 ('Luis', 'Perez', '99887766Y', '+34 633555666', 3);
 
-INSERT INTO CHEF (EMPLOYEE_idEMPLOYEE) 
-VALUES (1), (2),(3);
+-- 3. Rols (Chef/Driver)
+INSERT INTO CHEF (EMPLOYEE_idEMPLOYEE) VALUES (1), (2), (3);
+INSERT INTO DRIVER (EMPLOYEE_idEMPLOYEE) VALUES (4), (5), (6);
 
-INSERT INTO DRIVER (EMPLOYEE_idEMPLOYEE) 
-VALUES (4), (5), (6);
-
-
-INSERT INTO PIZZA_TYPE (name) 
-VALUES ('Classic'), ('Vegetarian'), ('Spicy');
-
-
-INSERT INTO PRODUCT (name, price, image_url, description) 
+-- 4. PRODUCTES (He afegit els IDs 8 i 9 perquè les comandes no fallin)
+INSERT INTO PRODUCT (idPRODUCT, name, price, product_type, description) 
 VALUES 
-('Margherita Pizza', 10.50, 'p_margherita.jpg', 'Tomato sauce, basil and mozzarella: for the classic ones.'),
-('Pepperoni Pizza', 12.00, 'p_pepperoni.jpg', 'Classic pepperoni'),
-('Veggie Pizza', 11.50, 'p_veggie.jpg', 'Fresh peppers, champis, and black olives');
+(1, 'Margherita Pizza', 10.50, 'pizza', 'Classic tomato and mozzarella'),
+(2, 'Veggie Pizza', 11.50, 'pizza', 'Fresh veggies'),
+(3, 'Pepperoni Pizza', 12.00, 'pizza', 'Classic pepperoni'),
+(4, 'Cheese Burger', 8.50, 'burger', 'Beef patty with cheddar'),
+(7, 'Coca-Cola', 2.50, 'drink', '330ml can'),
+(8, 'Fanta Taronja', 2.50, 'drink', '330ml can'), -- Necessari per a la Comanda 1
+(9, 'Aigua Mineral', 1.50, 'drink', '500ml water');  -- Necessari per a la Comanda 3
 
-INSERT INTO PIZZA (PRODUCT_idPRODUCT, PIZZA_TYPE_idPIZZA_TYPE) 
+-- 5. CATEGORIES (Ara els IDs 1, 2 i 3 ja existeixen a PRODUCT)
+INSERT INTO PIZZA_TYPE (name, PRODUCT_idPRODUCT) 
 VALUES 
-(1, 2),(2, 3),(3, 2); 
+('Classic', 1), 
+('Vegetarian', 2), 
+('Spicy', 3);
 
-INSERT INTO PRODUCT (name, price, image_url, description) 
-VALUES 
-('Cheese Burger', 8.50, 'b_Cheese.jpg', 'Beef patty with cheddar'),
-('Double Cheese Burger', 9.50, 'b_Double.jpg', 'Double Beef patty with cheddar: double the flavour!'),
-('Classic',9.5,'Classic_b.jpg','BLT with cheese');
-
-INSERT INTO BURGER (PRODUCT_idPRODUCT)
-VALUES 
-(4),(5),(6);
-
-INSERT INTO PRODUCT (name, price, image_url, description) 
-VALUES 
-('Coca-Cola', 2.50, 'coke.jpg', '330ml can'),
-('Fanta', 2.50, 'coke.jpg', '330ml can'),
-('Water', 1.50, 'water.jpg', '500ml still water');
-
-INSERT INTO DRINK (PRODUCT_idPRODUCT) 
-VALUES 
-(7), (8), (9);
-
+-- 6. Clients
 INSERT INTO CUSTOMER (name, surname, phone_number, address, postal_code, city, province) 
 VALUES 
 ('Elena', 'Martínez', '+34 655123456', 'Calle Goya 5', '28001', 'Madrid', 'Mad'),
@@ -63,54 +47,27 @@ VALUES
 ('Jordi', 'Puig', '+34 688987654', 'Carrer Balmes 10', '08001', 'Barcelona', 'Bcn'),
 ('Ana', 'Sanz', '+34 600555444', 'Calle Sierpes 2', '41011', 'Sevilla', 'Sev');
 
-
-INSERT INTO `ORDER` (order_type, date_time, order_total_amount, CUSTOMER_idCUSTOMER, STORE_idSTORE, DRIVER_EMPLOYEE_idEMPLOYEE, CHEF_EMPLOYEE_idEMPLOYEE ) 
-VALUES 
-('delivery', NOW(), 0.00, 1, 1, 4, 1); 
-
+-- 7. COMANDES
+-- Comanda 1 (Lliurament a domicili)
+INSERT INTO `ORDER` (order_type, date_time, order_total_amount, delivery_time, CUSTOMER_idCUSTOMER, STORE_idSTORE, DRIVER_EMPLOYEE_idEMPLOYEE, CHEF_EMPLOYEE_idEMPLOYEE) 
+VALUES ('delivery', NOW(), 0.00, NOW(), 1, 1, 4, 1); 
 SET @order1 = LAST_INSERT_ID(); 
 
 INSERT INTO ORDER_DETAILS (ORDER_idORDER, PRODUCT_idPRODUCT, product_quanity, unit_price, line_total) 
-VALUES 
-(@order1, 1, 2, 10.50, 0); 
+VALUES (@order1, 1, 2, 10.50, 0), (@order1, 8, 4, 2.50, 0); 
 
-INSERT INTO ORDER_DETAILS (ORDER_idORDER, PRODUCT_idPRODUCT, product_quanity, unit_price, line_total) 
-VALUES 
-(@order1, 8, 4, 2.50, 0);  
-
-
-INSERT INTO `ORDER` (order_type, date_time, order_total_amount, CUSTOMER_idCUSTOMER, STORE_idSTORE, DRIVER_EMPLOYEE_idEMPLOYEE, CHEF_EMPLOYEE_idEMPLOYEE) 
-VALUES ('pickup', NOW(), 0.00, 2, 1, NULL, 1); 
-
+-- Comanda 2 (Recollida en botiga, sense repartidor)
+INSERT INTO `ORDER` (order_type, date_time, order_total_amount, delivery_time, CUSTOMER_idCUSTOMER, STORE_idSTORE, DRIVER_EMPLOYEE_idEMPLOYEE, CHEF_EMPLOYEE_idEMPLOYEE) 
+VALUES ('pickup', NOW(), 0.00, NOW(), 2, 1, NULL, 1); 
 SET @order2 = LAST_INSERT_ID();
 
 INSERT INTO ORDER_DETAILS (ORDER_idORDER, PRODUCT_idPRODUCT, product_quanity, unit_price, line_total) 
 VALUES (@order2, 4, 1, 8.50, 0); 
 
-
-INSERT INTO `ORDER` (order_type, date_time, order_total_amount, CUSTOMER_idCUSTOMER, STORE_idSTORE, DRIVER_EMPLOYEE_idEMPLOYEE,CHEF_EMPLOYEE_idEMPLOYEE) 
-VALUES ('delivery', NOW(), 0.00, 3, 2, 5, 2); 
-
+-- Comanda 3
+INSERT INTO `ORDER` (order_type, date_time, order_total_amount, delivery_time, CUSTOMER_idCUSTOMER, STORE_idSTORE, DRIVER_EMPLOYEE_idEMPLOYEE, CHEF_EMPLOYEE_idEMPLOYEE) 
+VALUES ('delivery', NOW(), 0.00, NOW(), 3, 2, 5, 2); 
 SET @order3 = LAST_INSERT_ID();
 
 INSERT INTO ORDER_DETAILS (ORDER_idORDER, PRODUCT_idPRODUCT, product_quanity, unit_price, line_total) 
-VALUES (@order3, 2, 3, 12.00, 0); 
-
-INSERT INTO ORDER_DETAILS (ORDER_idORDER, PRODUCT_idPRODUCT, product_quanity, unit_price, line_total) 
-VALUES (@order3, 9, 4, 1.50, 0); 
-
-
-INSERT INTO `ORDER` (order_type, date_time, order_total_amount, CUSTOMER_idCUSTOMER, STORE_idSTORE, DRIVER_EMPLOYEE_idEMPLOYEE, CHEF_EMPLOYEE_idEMPLOYEE ) 
-VALUES 
-('delivery', NOW(), 0.00, 4, 3, 6, 3); 
-
-SET @order4 = LAST_INSERT_ID(); 
-
-INSERT INTO ORDER_DETAILS (ORDER_idORDER, PRODUCT_idPRODUCT, product_quanity, unit_price, line_total) 
-VALUES 
-(@order4, 1, 1, 10.50, 0); 
-
-INSERT INTO ORDER_DETAILS (ORDER_idORDER, PRODUCT_idPRODUCT, product_quanity, unit_price, line_total) 
-VALUES 
-(@order4, 7, 2, 2.50, 0);  
-
+VALUES (@order3, 2, 3, 12.00, 0), (@order3, 9, 4, 1.50, 0);
