@@ -17,11 +17,11 @@ VALUES
 ('Sofia', 'Ruiz', '55667788Z', '+34 622444555', 2),
 ('Luis', 'Perez', '99887766Y', '+34 633555666', 3);
 
--- 3. Rols (Chef/Driver)
+-- 3. Rols
 INSERT INTO CHEF (EMPLOYEE_idEMPLOYEE) VALUES (1), (2), (3);
 INSERT INTO DRIVER (EMPLOYEE_idEMPLOYEE) VALUES (4), (5), (6);
 
--- 4. PRODUCTES (He afegit els IDs 8 i 9 perquè les comandes no fallin)
+-- 4. PRODUCTES 
 INSERT INTO PRODUCT (idPRODUCT, name, price, product_type, description) 
 VALUES 
 (1, 'Margherita Pizza', 10.50, 'pizza', 'Classic tomato and mozzarella'),
@@ -29,10 +29,10 @@ VALUES
 (3, 'Pepperoni Pizza', 12.00, 'pizza', 'Classic pepperoni'),
 (4, 'Cheese Burger', 8.50, 'burger', 'Beef patty with cheddar'),
 (7, 'Coca-Cola', 2.50, 'drink', '330ml can'),
-(8, 'Fanta Taronja', 2.50, 'drink', '330ml can'), -- Necessari per a la Comanda 1
-(9, 'Aigua Mineral', 1.50, 'drink', '500ml water');  -- Necessari per a la Comanda 3
+(8, 'Fanta Taronja', 2.50, 'drink', '330ml can'), 
+(9, 'Aigua Mineral', 1.50, 'drink', '500ml water');  
 
--- 5. CATEGORIES (Ara els IDs 1, 2 i 3 ja existeixen a PRODUCT)
+-- 5. CATEGORIES 
 INSERT INTO PIZZA_TYPE (name, PRODUCT_idPRODUCT) 
 VALUES 
 ('Classic', 1), 
