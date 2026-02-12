@@ -220,12 +220,10 @@ FOR EACH ROW
 BEGIN
     DECLARE v_type VARCHAR(45);
 
-    -- Obtenim el tipus de producte de la taula pare
     SELECT product_type INTO v_type 
     FROM PRODUCT 
     WHERE idPRODUCT = NEW.PRODUCT_idPRODUCT;
 
-    -- Validem que el producte sigui realment una pizza
     IF v_type <> 'pizza' THEN
         SIGNAL SQLSTATE '45000' 
         SET MESSAGE_TEXT = 'Error: No es pot assignar una categoria de pizza a un producte que no sigui de tipus pizza.';
